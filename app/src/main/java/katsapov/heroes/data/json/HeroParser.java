@@ -1,38 +1,24 @@
 package katsapov.heroes.data.json;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
+import java.lang.reflect.Type;
 import java.util.List;
 
-import katsapov.heroes.data.entitiy.Constants;
-import katsapov.heroes.data.entitiy.Hero;
+import katsapov.heroes.data.entity.Hero;
 
-public class HeroParser {
+public class HeroParser implements BaseParser<List<Hero>> {
 
-    private static JSONObject json;
-    private static List<Hero> listHeroes;
+    private Gson gson;
 
-    public HeroParser(List<Hero> listHeroes) {
-        HeroParser.listHeroes = listHeroes;
+    public HeroParser(Gson gson) {
+        this.gson = gson;
     }
 
-    public static void parseData(JSONArray array) {
-        for (int i = 0; i < array.length(); i++) {
-            Hero superHero = new Hero();
-            json = null;
-            try {
-                json = array.getJSONObject(i);
-                superHero.setName(json.getString(Constants.TAG_NAME));
-                superHero.setGender(json.getString(Constants.TAG_GENDER));
-                superHero.setCulture(json.getString(Constants.TAG_CULTURE));
-                superHero.setBorn(json.getString(Constants.TAG_BORN));
-                superHero.setDie(json.getString(Constants.TAG_DIE));
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            listHeroes.add(superHero);
-        }
+    @Override
+    public List<Hero> parseData(String json) {
+        Type listType = new TypeToken<List<Hero>>() {}.getType();
+        return gson.fromJson(json, listType);
     }
 }
